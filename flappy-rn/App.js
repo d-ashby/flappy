@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { StyleSheet, View, Dimensions } from 'react-native'
 import Bird from './components/Bird'
 import Obstacles from './components/Obstacles'
 
@@ -9,12 +9,18 @@ export default function App() {
   const birdLeft = screenWidth / 2
   const [birdBottom, setBirdBottom] = useState(screenHeight / 2)
   const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth)
+  const [obstaclesLeftTwo, setObstaclesLeftTwo] = useState(
+    screenWidth + screenWidth / 2 + 30
+  )
+  const [obstaclesNegHeight, setObstaclesNegHeight] = useState(0)
+  const [obstaclesNegHeightTwo, setObstaclesNegHeightTwo] = useState(0)
   const obstacleWdith = 60
-  const obstacleHeight = 300
-  const gap = 50
+  const obstacleHeight = 400
+  const gap = 200
   const gravity = 3
   let gameTimerId
   let obstaclesLeftTimerId
+  let obstaclesLeftTimerIdTwo
 
   // bird gravity
 
@@ -31,18 +37,39 @@ export default function App() {
     //return bird bottom as a dependency
   }, [birdBottom])
   //logs the position change every 30ms
-  console.log(birdBottom)
+  // console.log(birdBottom)
+
+  //obstacles
 
   useEffect(() => {
-    if (obstaclesLeft > 0) {
+    if (obstaclesLeft > -obstacleWdith) {
       obstaclesLeftTimerId = setInterval(() => {
         setObstaclesLeft((obstaclesLeft) => obstaclesLeft - 5)
       }, 30)
-    }
-    return () => {
-      clearInterval(obstaclesLeftTimerId)
+      return () => {
+        clearInterval(obstaclesLeftTimerId)
+      }
+    } else {
+      setObstaclesLeft(screenWidth)
+      setObstaclesNegHeight(-Math.random() * 100)
     }
   }, [obstaclesLeft])
+
+  //2ndobstacles
+
+  useEffect(() => {
+    if (obstaclesLeftTwo > -obstacleWdith) {
+      obstaclesLeftTimerIdTwo = setInterval(() => {
+        setObstaclesLeftTwo((obstaclesLeftTwo) => obstaclesLeftTwo - 5)
+      }, 30)
+      return () => {
+        clearInterval(obstaclesLeftTimerIdTwo)
+      }
+    } else {
+      setObstaclesLeftTwo(screenWidth)
+      setObstaclesNegHeightTwo(-Math.random() * 100)
+    }
+  }, [obstaclesLeftTwo])
 
   return (
     <View style={styles.container}>
@@ -50,6 +77,14 @@ export default function App() {
       <Obstacles
         obstaclesLeft={obstaclesLeft}
         obstacleWdith={obstacleWdith}
+        randomBottom={obstaclesNegHeight}
+        gap={gap}
+        obstacleHeight={obstacleHeight}
+      />
+      <Obstacles
+        obstaclesLeft={obstaclesLeftTwo}
+        obstacleWdith={obstacleWdith}
+        randomBottom={obstaclesNegHeightTwo}
         gap={gap}
         obstacleHeight={obstacleHeight}
       />
